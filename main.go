@@ -29,11 +29,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	log.Printf("Creating new server instance...")
 	var s = grpc.NewServer()
 	log.Printf("Registering server instance...")
 	service.RegisterDeliveryTrackerServer(s, &server{})
-	log.Printf("Registered server instance...start tracker service...")
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
