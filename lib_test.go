@@ -2,7 +2,9 @@ package main
 
 import (
 	. "github.com/waitr/tracker/service"
+	"math"
 	"testing"
+	"time"
 )
 
 func TestHaversineDistance(t *testing.T) {
@@ -18,11 +20,26 @@ func TestHaversineDistance(t *testing.T) {
 	if distance != 43.25771880484925 {
 		t.Fail()
 	}
+	// I think real tests/fuzz tests would choose points starting
+	// from near the poles and measure how much distances start
+	// to vary
 }
 
 func TestRadians(t *testing.T) {
 	r := Radians(0)
 	if r != 0 {
+		t.Fail()
+	}
+	r1 := Radians(180)
+	if math.Round(r1) != math.Round(math.Pi) {
+		t.Fail()
+	}
+}
+
+func TestArrivalTime(t *testing.T) {
+	now := time.Now()
+	at := ArrivalTime(now, 1, 1, KMH)
+	if at.Hour() != now.Hour() + 1 {
 		t.Fail()
 	}
 }
