@@ -4,9 +4,9 @@ services:
   tracker:
     build: .
     ports:
-      - "50051:50051"
+      - "${TRACKER_SERVICE_PORT}:${TRACKER_SERVICE_PORT}"
   redis:
     image: redis
     container_name: redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
