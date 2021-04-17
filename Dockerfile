@@ -6,4 +6,3 @@ RUN go mod vendor
 RUN go build -o dist/tracker main.go
 RUN chmod u+x /app/dist/tracker
 ENV PATH="/app/dist:${PATH}"
-EXPOSE "50051:50051"
