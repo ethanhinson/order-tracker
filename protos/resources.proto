@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package order_tracker;
+
+option go_package = ".;service";
+
+message point {
+    double latitude = 1;
+    double longitude = 2;
+}
+
+message driver {
+    string id = 1;
+    point location = 2;
+}
+
+message delivery {
+    string id = 1;
+    point location = 2;
+    string time = 4;
+}
