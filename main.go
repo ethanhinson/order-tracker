@@ -18,12 +18,7 @@ func readConfig() {
 	_ = gotenv.Load()
 }
 
-// server is used to implement StaysServer.
-type server struct {
-	service.UnimplementedDeliveryTrackerServer
-}
-
-func (s *server) Track(ctx context.Context, input *service.TrackDelivery) (*service.DeliveryStatus, error) {
+func HandleTrackingRequest(input *service.TrackDelivery, messenger SMSMessenger) (*service.DeliveryStatus, error) {
 	speed, err := strconv.Atoi(os.Getenv("DRIVER_SPEED"))
 	rate, err := strconv.Atoi(os.Getenv("DRIVER_RATE"))
 
@@ -45,6 +40,15 @@ func (s *server) Track(ctx context.Context, input *service.TrackDelivery) (*serv
 		OnTime:       false,
 		ExpectedTime: arrival.String(),
 	}, err
+}
+
+// server is used to implement StaysServer.
+type server struct {
+	service.UnimplementedDeliveryTrackerServer
+}
+
+func (s *server) Track(ctx context.Context, input *service.TrackDelivery) (*service.DeliveryStatus, error) {
+	return HandleTrackingRequest(input, TwilioMessenger{})
 }
 
 func main() {
