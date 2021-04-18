@@ -34,10 +34,10 @@ func Haversine(t float64) float64 {
 /**
  * I researched the various approaches to calculating the geodesic distance
  * between 2 points. I suspect that while this formula is the less accurate when compared to the Vincenty
- * formula, or ECEF based calculations that. It is probably accurate enough when considering the use
+ * formula, or ECEF based calculations. It is probably accurate enough when considering the use
  * case and context.
  */
-func HaversineDistance(from Point, to Point) (distance float64) {
+func HaversineDistance(from *Point, to *Point) (distance float64) {
 	return 2 * earthRadius * math.Asin(math.Sqrt(Haversine(Radians(to.GetLatitude()) - Radians(from.GetLatitude())) +
 		math.Cos(Radians(from.GetLongitude())) * math.Cos(Radians(to.GetLongitude())) * Haversine(Radians(to.GetLongitude()) - Radians(from.GetLongitude()))))
 }
