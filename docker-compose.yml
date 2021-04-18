@@ -2,11 +2,32 @@ version: '3'
 
 services:
   tracker:
-    build: .
+    image: order-tracker:latest
+    command: "/app/dist/tracker"
     ports:
       - "${TRACKER_SERVICE_PORT}:${TRACKER_SERVICE_PORT}"
+    depends_on:
+      - redis
+    links:
+      - redis
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - DRIVER_SPEED=${DRIVER_SPEED}
+      - DRIVER_RATE=${DRIVER_RATE}
+      - TWILIIO_AUTH_TOKEN=${TWILIIO_AUTH_TOKEN}
+      - TWILIIO_SID=${TWILIIO_SID}
+      - TRACKER_SERVICE_PORT=${TRACKER_SERVICE_PORT}
   redis:
     image: redis
-    container_name: redis
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
+  envoy:
+    image: envoyproxy/envoy:v1.18.2
+    links:
+      - tracker
+    volumes:
+      - "./envoy.yml:/etc/envoy/envoy.yaml"
+      - "./descriptors/proto.pb:/tmp/envoy/proto.pb"
+    ports:
+      - "${ENVOY_PORT}:${ENVOY_PORT}"
