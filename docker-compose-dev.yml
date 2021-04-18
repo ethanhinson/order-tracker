@@ -7,8 +7,6 @@ services:
       - "${REDIS_PORT}:${REDIS_PORT}"
   envoy:
     image: envoyproxy/envoy:v1.18.2
-    links:
-      - tracker
     volumes:
       - "./envoy.yml:/etc/envoy/envoy.yaml"
       - "./descriptors/proto.pb:/tmp/envoy/proto.pb"

@@ -17,6 +17,7 @@ services:
       - DRIVER_RATE=${DRIVER_RATE}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_SID=${TWILIO_SID}
+      - TWILIO_PHONE=${TWILIO_PHONE}
       - TRACKER_SERVICE_PORT=${TRACKER_SERVICE_PORT}
   redis:
     image: redis
