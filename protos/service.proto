@@ -1,32 +1,32 @@
 syntax = "proto3";
 
-package order_tracker;
+package tracking;
 
 option go_package = ".;service";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
-message point {
+message Point {
     double latitude = 1;
     double longitude = 2;
 }
 
-message track_delivery {
+message TrackDelivery {
     string order_id = 1;
-    point destination = 2;
-    point location = 3;
+    Point destination = 2;
+    Point location = 3;
     string contact = 4;
     google.protobuf.Timestamp arrival_time = 5;
 }
 
-message delivery_status {
+message DeliveryStatus {
     bool on_time = 1;
     string expected_time = 2;
 }
 
-service delivery_tracker {
-    rpc track (track_delivery) returns (delivery_status) {
+service DeliveryTracker {
+    rpc track (TrackDelivery) returns (DeliveryStatus) {
         option (google.api.http) = {
             get: "/track"
         };
