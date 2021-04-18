@@ -7,7 +7,7 @@ spec:
   selector:
     app: envoy
   ports:
-    - name: https
+    - name: http
       protocol: TCP
-      port: 443
-      targetPort: 443
+      port: 80
+      targetPort: 80

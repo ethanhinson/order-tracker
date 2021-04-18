@@ -15,41 +15,21 @@ spec:
       containers:
         - name: envoy
           image: envoyproxy/envoy:v1.18.2
+          env:
+            - name: ENVOY_UID
+              value: "0"
           ports:
-            - name: https
-              containerPort: 443
+            - name: http
+              containerPort: 80
           volumeMounts:
             - name: config
               mountPath: /etc/envoy
-            - name: certs
-              mountPath: /etc/ssl/envoy
             - name: proto-descriptor
-              mountPath: /tmp/envoy/proto.pb
-          readinessProbe:
-            httpGet:
-              scheme: HTTPS
-              path: /healthz
-              httpHeaders:
-                - name: x-envoy-livenessprobe
-                  value: healthz
-              port: 443
-            initialDelaySeconds: 3
-          livenessProbe:
-            httpGet:
-              scheme: HTTPS
-              path: /healthz
-              httpHeaders:
-                - name: x-envoy-livenessprobe
-                  value: healthz
-              port: 443
-            initialDelaySeconds: 10
+              mountPath: /tmp/envoy
       volumes:
         - name: config
           configMap:
             name: envoy-conf
-        - name: certs
-          secret:
-            secretName: envoy-certs
         - name: proto-descriptor
           configMap:
             name: proto-descriptor
