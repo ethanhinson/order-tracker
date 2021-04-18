@@ -10,6 +10,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -23,11 +24,28 @@ type server struct {
 	service.UnimplementedDeliveryTrackerServer
 }
 
-func (s *server) Track(context.Context, *service.TrackDelivery) (*service.DeliveryStatus, error) {
+func (s *server) Track(ctx context.Context, input *service.TrackDelivery) (*service.DeliveryStatus, error) {
+	speed, err := strconv.Atoi(os.Getenv("DRIVER_SPEED"))
+	rate, err := strconv.Atoi(os.Getenv("DRIVER_RATE"))
+
+	arrival := ArrivalTime(
+		time.Now(),
+		HaversineDistance(input.GetLocation(), input.GetDestination()),
+		float64(speed),
+		Unit(rate),
+	)
+
+	if arrival.Unix() <= input.GetArrivalTime().GetSeconds() {
+		return &service.DeliveryStatus{
+			OnTime:       true,
+			ExpectedTime: arrival.String(),
+		}, err
+	}
+
 	return &service.DeliveryStatus{
 		OnTime:       false,
-		ExpectedTime: time.Now().String(),
-	}, nil
+		ExpectedTime: arrival.String(),
+	}, err
 }
 
 var RedisConnection *redis.Client
