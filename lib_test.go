@@ -17,7 +17,7 @@ func TestHaversineDistance(t *testing.T) {
 		Longitude: 106.8175,
 	}
 	distance := HaversineDistance(*glenwoodSprings, *aspen)
-	if distance != 43.25771880484925 {
+	if math.Round(distance) != 43 {
 		t.Fail()
 	}
 	// I think real tests/fuzz tests would choose points starting

@@ -7,7 +7,19 @@ import (
 )
 
 // We are using KM
-const earthRadius = 6371
+const (
+	earthRadius = 6371
+	km = 1.60934
+)
+
+// We'll support miles or kilometers when calculating arrival
+// time.
+type Unit int
+
+const (
+	KMH = iota
+	MPH
+)
 
 // Convert degrees to radians
 func Radians(deg float64) float64 {
@@ -30,17 +42,9 @@ func HaversineDistance(from Point, to Point) (distance float64) {
 		math.Cos(Radians(from.GetLongitude())) * math.Cos(Radians(to.GetLongitude())) * Haversine(Radians(to.GetLongitude()) - Radians(from.GetLongitude()))))
 }
 
-// We'll support miles or kilometers when calculating arrival
-// time.
-type Unit int
-
-const (
-	KMH = iota
-	MPH
-)
-
+// Convert MPH -> KMH
 func mphTokmh(mph float64) float64 {
-	return mph * 1.60934
+	return mph * km
 }
 
 // Given a distance in KM, a rate of speed, and a `unit`. Calculate the
