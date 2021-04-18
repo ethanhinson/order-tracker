@@ -10,6 +10,6 @@ the image first. There is a script provided in `./bin/build.sh` if you'd like to
  - `docker build . -t order-tracker:latest` to build the image
  - `docker-compose up` to bring the service up
  
-## Accessing the containers
+## Accessing the app container
 
 From the root of the project simply run: `docker-compose exec tracker bash`
