@@ -36,6 +36,16 @@ func HandleTrackingRequest(input *service.TrackDelivery, messenger SMSMessenger)
 		}, err
 	}
 
+	sent, err := messenger.Send(SMSMessage{
+		To:   input.GetContact(),
+		From: os.Getenv("TWILIO_PHONE"),
+		Body: fmt.Sprintf("Order with id: %s will be late. Expected time: %s", input.GetOrderId(), arrival.String()),
+	})
+
+	if !sent || err != nil {
+		fmt.Printf("Message for late order (%s) was not sent with err: %v", input.GetOrderId(), err)
+	}
+
 	return &service.DeliveryStatus{
 		OnTime:       false,
 		ExpectedTime: arrival.String(),
@@ -48,7 +58,12 @@ type server struct {
 }
 
 func (s *server) Track(ctx context.Context, input *service.TrackDelivery) (*service.DeliveryStatus, error) {
-	return HandleTrackingRequest(input, TwilioMessenger{})
+	msg := new(TwilioMessenger)
+	resp, err := HandleTrackingRequest(input, msg)
+	if err != nil {
+		fmt.Printf("Err: %v", err)
+	}
+	return resp, err
 }
 
 func main() {
