@@ -28,7 +28,7 @@ message DeliveryStatus {
 service DeliveryTracker {
     rpc track (TrackDelivery) returns (DeliveryStatus) {
         option (google.api.http) = {
-            get: "/track"
+            post: "/track"
         };
     }
 }
