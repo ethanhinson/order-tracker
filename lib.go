@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	. "github.com/waitr/tracker/service"
 	"math"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -65,4 +68,45 @@ const DateLayout = "2006-01-02T15:04:05Z"
 func MakeTime(value string) time.Time {
 	t, _ := time.Parse(DateLayout, value)
 	return t
+}
+
+
+func HandleTrackingRequest(input *TrackDelivery, messenger SMSMessenger) (*DeliveryStatus, error) {
+	speed, err := strconv.Atoi(os.Getenv("DRIVER_SPEED"))
+	rate, err := strconv.Atoi(os.Getenv("DRIVER_RATE"))
+
+	arrival := ArrivalTime(
+		time.Now(),
+		HaversineDistance(input.GetLocation(), input.GetDestination()),
+		float64(speed),
+		Unit(rate),
+	)
+
+	expected := MakeTime(input.GetArrivalTime())
+	if arrival.Unix() <= expected.Unix() {
+		return &DeliveryStatus{
+			OnTime:       true,
+			ExpectedTime: arrival.String(),
+		}, err
+	}
+
+	// Respond async. In a real world context you would likely
+	// queue these messages and send them "off main thread".
+	// This is a common approach to reduce network latency
+	// for the API and permit things like "retries".
+	go (func() {
+		sent, err := messenger.Send(SMSMessage{
+			To:   input.GetContact(),
+			From: os.Getenv("TWILIO_PHONE"),
+			Body: fmt.Sprintf("Order with id: %s will be late. Expected time: %s", input.GetOrderId(), arrival.String()),
+		})
+		if !sent || err != nil {
+			fmt.Printf("Message for late order (%s) was not sent with err: %v", input.GetOrderId(), err)
+		}
+	})()
+
+	return &DeliveryStatus{
+		OnTime:       false,
+		ExpectedTime: arrival.String(),
+	}, err
 }
