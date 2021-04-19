@@ -37,7 +37,7 @@ func TestRadians(t *testing.T) {
 }
 
 func TestArrivalTime(t *testing.T) {
-	now := time.Now()
+	now := time.Now().UTC()
 	at := ArrivalTime(now, 1, 1, KMH)
 	if at.Hour() != now.Hour() + 1 {
 		t.Fail()
@@ -49,5 +49,9 @@ func TestArrivalTime(t *testing.T) {
 }
 
 func TestMakeTime(t *testing.T) {
-
+	str := "2021-04-19T06:00:00Z"
+	fromStr := MakeTime(str)
+	if fromStr.Month() != 04 || fromStr.Year() != 2021 || fromStr.Day() != 19 {
+		t.Fail()
+	}
 }
