@@ -29,7 +29,8 @@ func HandleTrackingRequest(input *service.TrackDelivery, messenger SMSMessenger)
 		Unit(rate),
 	)
 
-	if arrival.Unix() <= input.GetArrivalTime().GetSeconds() {
+	expected := MakeTime(input.GetArrivalTime())
+	if arrival.Unix() <= expected.Unix() {
 		return &service.DeliveryStatus{
 			OnTime:       true,
 			ExpectedTime: arrival.String(),

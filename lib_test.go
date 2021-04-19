@@ -47,3 +47,7 @@ func TestArrivalTime(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestMakeTime(t *testing.T) {
+
+}

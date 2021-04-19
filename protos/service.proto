@@ -5,7 +5,6 @@ package tracking;
 option go_package = ".;service";
 
 import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
 
 message Point {
     double latitude = 1;
@@ -17,7 +16,7 @@ message TrackDelivery {
     Point destination = 2;
     Point location = 3;
     string contact = 4;
-    google.protobuf.Timestamp arrival_time = 5;
+    string arrival_time = 5;
 }
 
 message DeliveryStatus {

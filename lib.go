@@ -56,6 +56,13 @@ func ArrivalTime(start time.Time, distance float64, speed float64, unit Unit) ti
 	if unit == MPH {
 		speed = mphTokmh(speed)
 	}
-	t := time.Now().Add(time.Duration(((distance / speed) * 60 * 60) * 1000000000))
+	t := time.Now().Add(time.Duration(((distance / speed) * 60 * 60) * 1000000000)).UTC()
+	return t
+}
+
+const DateLayout = "2006-01-02T15:04:05Z"
+
+func MakeTime(value string) time.Time {
+	t, _ := time.Parse(DateLayout, value)
 	return t
 }
