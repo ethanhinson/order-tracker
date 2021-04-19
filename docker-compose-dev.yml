@@ -1,10 +1,6 @@
 version: '3'
 
 services:
-  redis:
-    image: redis
-    ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
   envoy:
     image: envoyproxy/envoy:v1.18.2
     volumes:

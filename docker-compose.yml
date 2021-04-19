@@ -6,23 +6,13 @@ services:
     command: "/app/dist/tracker"
     ports:
       - "${TRACKER_SERVICE_PORT}:${TRACKER_SERVICE_PORT}"
-    depends_on:
-      - redis
-    links:
-      - redis
     environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
       - DRIVER_SPEED=${DRIVER_SPEED}
       - DRIVER_RATE=${DRIVER_RATE}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_SID=${TWILIO_SID}
       - TWILIO_PHONE=${TWILIO_PHONE}
       - TRACKER_SERVICE_PORT=${TRACKER_SERVICE_PORT}
-  redis:
-    image: redis
-    ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
   envoy:
     image: envoyproxy/envoy:v1.18.2
     links:

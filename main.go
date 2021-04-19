@@ -36,15 +36,20 @@ func HandleTrackingRequest(input *service.TrackDelivery, messenger SMSMessenger)
 		}, err
 	}
 
-	sent, err := messenger.Send(SMSMessage{
-		To:   input.GetContact(),
-		From: os.Getenv("TWILIO_PHONE"),
-		Body: fmt.Sprintf("Order with id: %s will be late. Expected time: %s", input.GetOrderId(), arrival.String()),
-	})
-
-	if !sent || err != nil {
-		fmt.Printf("Message for late order (%s) was not sent with err: %v", input.GetOrderId(), err)
-	}
+	// Respond async. In a real world context you would likely
+	// queue these messages and send them "off main thread".
+	// This is a common approach to reduce network latency
+	// for the API and permit things like "retries".
+	go (func() {
+		sent, err := messenger.Send(SMSMessage{
+			To:   input.GetContact(),
+			From: os.Getenv("TWILIO_PHONE"),
+			Body: fmt.Sprintf("Order with id: %s will be late. Expected time: %s", input.GetOrderId(), arrival.String()),
+		})
+		if !sent || err != nil {
+			fmt.Printf("Message for late order (%s) was not sent with err: %v", input.GetOrderId(), err)
+		}
+	})()
 
 	return &service.DeliveryStatus{
 		OnTime:       false,
@@ -52,7 +57,6 @@ func HandleTrackingRequest(input *service.TrackDelivery, messenger SMSMessenger)
 	}, err
 }
 
-// server is used to implement StaysServer.
 type server struct {
 	service.UnimplementedDeliveryTrackerServer
 }
@@ -68,8 +72,6 @@ func (s *server) Track(ctx context.Context, input *service.TrackDelivery) (*serv
 
 func main() {
 	readConfig()
-	InitializeRedisConnection()
-	defer RedisConnection.Close()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("TRACKER_SERVICE_PORT")))
 	log.Printf("Preparing to listen for connections...")
 	if err != nil {
